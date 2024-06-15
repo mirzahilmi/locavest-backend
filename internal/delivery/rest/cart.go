@@ -9,7 +9,12 @@ import (
 
 func RegisterCartHandler(api *echo.Group) {
 	carts := api.Group("/carts")
+	carts.GET("", fetchCartItems)
 	carts.POST("", addToCart)
+}
+
+func fetchCartItems(c echo.Context) error {
+	return c.NoContent(http.StatusOK)
 }
 
 func addToCart(c echo.Context) error {

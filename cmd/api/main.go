@@ -36,7 +36,7 @@ func main() {
 	ctx, exit := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer exit()
 	go func() {
-		if err := r.Start(":" + os.Getenv("API_PORT")); err != nil && err != http.ErrServerClosed {
+		if err := r.StartAutoTLS(":" + os.Getenv("API_PORT")); err != nil && err != http.ErrServerClosed {
 			log.Fatal().Err(err).Caller().Msg("failed to start server")
 		}
 	}()

@@ -1,42 +1,23 @@
 name: locavest
 
 volumes:
-  caddy_data: {}
   db-persistence: {}
 
 networks:
-  caddy_net:
-    external: true
   net:
     driver: bridge
 
 services:
-  caddy:
-    container_name: caddy
-    image: lucaslorentz/caddy-docker-proxy:ci-alpine
-    ports:
-      - 80:80
-      - 443:443
-    environment:
-      - CADDY_INGRESS_NETWORKS=caddy_net
-    networks: [caddy_net]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - caddy_data:/data
-    restart: unless-stopped
-
   backend:
     container_name: locavest_backend
     build: .
-    networks: [caddy_net, net]
+    networks: [net]
     restart: unless-stopped
+    ports: ["80:${API_PORT}"]
     depends_on:
       db:
         condition: service_healthy
     env_file: [.env]
-    labels:
-      caddy: locavest.server.mirza.biz.id
-      caddy.reverse_proxy: "{{upstreams ${API_PORT}}}"
 
   db:
     container_name: locavest_db
