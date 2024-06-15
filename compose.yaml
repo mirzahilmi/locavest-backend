@@ -1,0 +1,66 @@
+name: locavest
+
+volumes:
+  caddy_data: {}
+  db-persistence: {}
+  caddy_net:
+    external: true
+
+networks:
+  net:
+    driver: bridge
+
+services:
+  caddy:
+    container_name: caddy
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy_net
+    networks: [caddy_net]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy_data:/data
+    restart: unless-stopped
+
+  backend:
+    container_name: locavest_backend
+    build: .
+    networks: [caddy_net, net]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: [.env]
+    labels:
+      caddy: locavest.server.mirza.biz.id
+      caddy.reverse_proxy: "{{upstreams ${API_PORT}}}"
+
+  db:
+    container_name: locavest_db
+    image: mariadb:11.3.2-jammy
+    command: ['mariadbd', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    restart: unless-stopped
+    ports: [5432:3306]
+    networks: [net]
+    volumes:
+      - db-persistence:/var/lib/mysql
+      - ${PWD}/db/migrations:/docker-entrypoint-initdb.d
+    env_file: [.env]
+    environment:
+      - MARIADB_DATABASE=${DB_SCHEMA}
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      interval: 3s
+      retries: 5
+      start_period: 30s
