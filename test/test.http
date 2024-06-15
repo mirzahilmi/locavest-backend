@@ -5,10 +5,10 @@ GET {{serverURL}}/api/health
 Accept: application/json
 
 ###
-POST {{serverURL}}/api/courses
+POST {{serverURL}}/api/carts
 Content-Type: application/json
 
 {
-  "id": 1,
+  "productID": 1,
   "quanitity": 1
 }

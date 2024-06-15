@@ -10,6 +10,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/mirzahilmi/locavest-backend/internal/delivery/rest"
 	"github.com/mirzahilmi/locavest-backend/internal/pkg/cfg"
+	"github.com/mirzahilmi/locavest-backend/internal/repository"
+	"github.com/mirzahilmi/locavest-backend/internal/usecase"
 	"github.com/rs/zerolog"
 )
 
@@ -27,11 +29,14 @@ func init() {
 }
 
 func main() {
-	r := cfg.NewEcho()
+	r := cfg.NewEcho(&log)
 	api := r.Group("/api")
+	db := cfg.NewMariaDB()
 
 	rest.RegisterUtilHandler(api)
-	rest.RegisterCartHandler(api)
+	cartRepo := repository.NewCartRepository(db)
+	cartUsecase := usecase.NewcartUsecase(cartRepo)
+	rest.RegisterCartHandler(api, cartUsecase)
 
 	ctx, exit := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer exit()

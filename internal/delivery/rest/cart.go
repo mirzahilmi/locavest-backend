@@ -5,22 +5,31 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/mirzahilmi/locavest-backend/internal/model"
+	"github.com/mirzahilmi/locavest-backend/internal/usecase"
 )
 
-func RegisterCartHandler(api *echo.Group) {
-	carts := api.Group("/carts")
-	carts.GET("", fetchCartItems)
-	carts.POST("", addToCart)
+type cartHandler struct {
+	usecase usecase.CartUsecaseItf
 }
 
-func fetchCartItems(c echo.Context) error {
+func RegisterCartHandler(api *echo.Group, usecase usecase.CartUsecaseItf) {
+	carts := api.Group("/carts")
+	handler := cartHandler{usecase}
+	carts.GET("", handler.fetchCartItems)
+	carts.POST("", handler.addToCart)
+}
+
+func (h *cartHandler) fetchCartItems(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func addToCart(c echo.Context) error {
+func (h *cartHandler) addToCart(c echo.Context) error {
 	var item model.CartItem
 	if err := c.Bind(&item); err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return err
+	}
+	if err := h.usecase.Create(c.Request().Context(), &item); err != nil {
+		return err
 	}
 	return c.NoContent(http.StatusOK)
 }

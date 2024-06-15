@@ -7,30 +7,33 @@ import (
 	"github.com/mirzahilmi/locavest-backend/internal/repository"
 )
 
-type cartUsecaseItf interface {
-	Create(ctx context.Context, banner *model.CartItem) error
+type CartUsecaseItf interface {
+	Create(ctx context.Context, item *model.CartItem) error
 	Fetch(ctx context.Context) ([]model.CartItem, error)
-	Delete(ctx context.Context, slug string) error
+	Delete(ctx context.Context, id uint64) error
 }
 
-type bannerUsecase struct {
-	bannerRepo repository.CartRepositoryItf
+type cartUsecase struct {
+	cartRepo repository.CartRepositoryItf
 }
 
 func NewcartUsecase(
-	bannerRepo repository.CartRepositoryItf,
-) cartUsecaseItf {
-	return &bannerUsecase{bannerRepo}
+	cartRepo repository.CartRepositoryItf,
+) CartUsecaseItf {
+	return &cartUsecase{cartRepo}
 }
 
-func (u *bannerUsecase) Create(ctx context.Context, banner *model.CartItem) error {
+func (u *cartUsecase) Create(ctx context.Context, item *model.CartItem) error {
+	if err := u.cartRepo.Create(ctx, item); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *cartUsecase) Delete(ctx context.Context, id uint64) error {
 	panic("unimplemented")
 }
 
-func (u *bannerUsecase) Delete(ctx context.Context, slug string) error {
-	panic("unimplemented")
-}
-
-func (u *bannerUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
+func (u *cartUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
 	panic("unimplemented")
 }

@@ -8,30 +8,33 @@ import (
 )
 
 type CartRepositoryItf interface {
-	Create(ctx context.Context, banner *model.CartItem) error
+	Create(ctx context.Context, cart *model.CartItem) error
 	Read(ctx context.Context, size, page uint) ([]model.CartItem, error)
 	Delete(ctx context.Context, slug string) error
 }
 
-type bannerRepository struct {
+type cartRepository struct {
 	db *sqlx.DB
 }
 
 func NewCartRepository(db *sqlx.DB) CartRepositoryItf {
-	return &bannerRepository{db}
+	return &cartRepository{db}
 }
 
-func (r *bannerRepository) Create(ctx context.Context, banner *model.CartItem) error {
-	if _, err := r.db.NamedExecContext(ctx, "INSERT INTO cart (product_id, quantity) VALUES (?, ?)", *banner); err != nil {
+func (r *cartRepository) Create(ctx context.Context, cart *model.CartItem) error {
+	if _, err := r.db.NamedExecContext(ctx, `
+		INSERT INTO CartItems (ProductID, Quantity)
+		VALUE (:ProductID, :Quantity);
+	`, cart); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *bannerRepository) Delete(ctx context.Context, slug string) error {
+func (r *cartRepository) Delete(ctx context.Context, slug string) error {
 	panic("unimplemented")
 }
 
-func (r *bannerRepository) Read(ctx context.Context, size uint, page uint) ([]model.CartItem, error) {
+func (r *cartRepository) Read(ctx context.Context, size uint, page uint) ([]model.CartItem, error) {
 	panic("unimplemented")
 }
