@@ -3,10 +3,10 @@ name: locavest
 volumes:
   caddy_data: {}
   db-persistence: {}
-  caddy_net:
-    external: true
 
 networks:
+  caddy_net:
+    external: true
   net:
     driver: bridge
 
