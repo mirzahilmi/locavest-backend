@@ -30,10 +30,10 @@ func (u *cartUsecase) Create(ctx context.Context, item *model.CartItem) error {
 	return nil
 }
 
-func (u *cartUsecase) Delete(ctx context.Context, id uint64) error {
-	panic("unimplemented")
+func (u *cartUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
+	return u.cartRepo.Read(ctx)
 }
 
-func (u *cartUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
-	panic("unimplemented")
+func (u *cartUsecase) Delete(ctx context.Context, id uint64) error {
+	return u.cartRepo.Delete(ctx, id)
 }

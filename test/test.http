@@ -1,7 +1,7 @@
 @serverURL = http://localhost:8080
 
 ###
-GET {{serverURL}}/api/health
+GET {{serverURL}}/api/carts
 Accept: application/json
 
 ###
@@ -12,3 +12,7 @@ Content-Type: application/json
   "productID": 1,
   "quanitity": 1
 }
+
+###
+DELETE {{serverURL}}/api/carts/2
+Content-Type: application/json

@@ -9,8 +9,8 @@ import (
 
 type CartRepositoryItf interface {
 	Create(ctx context.Context, cart *model.CartItem) error
-	Read(ctx context.Context, size, page uint) ([]model.CartItem, error)
-	Delete(ctx context.Context, slug string) error
+	Read(ctx context.Context) ([]model.CartItem, error)
+	Delete(ctx context.Context, id uint64) error
 }
 
 type cartRepository struct {
@@ -31,10 +31,27 @@ func (r *cartRepository) Create(ctx context.Context, cart *model.CartItem) error
 	return nil
 }
 
-func (r *cartRepository) Delete(ctx context.Context, slug string) error {
-	panic("unimplemented")
+func (r *cartRepository) Read(ctx context.Context) ([]model.CartItem, error) {
+	items := make([]model.CartItem, 0)
+	if err := r.db.SelectContext(ctx, &items, `
+		SELECT CI.ID, 
+			P.Name,
+			P.Image,
+			P.Format,
+			P.Price
+		FROM CartItems CI
+		INNER JOIN Products P ON CI.ProductID = P.ID
+	`); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
-func (r *cartRepository) Read(ctx context.Context, size uint, page uint) ([]model.CartItem, error) {
-	panic("unimplemented")
+func (r *cartRepository) Delete(ctx context.Context, id uint64) error {
+	if _, err := r.db.ExecContext(ctx, `
+		DELETE FROM CartItems WHERE ID = ?;
+	`, id); err != nil {
+		return err
+	}
+	return nil
 }
