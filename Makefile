@@ -72,7 +72,7 @@ endif
 ## mig/up: apply all up database migrations
 .PHONY: mig/up
 mig/up:
-	@docker exec -it db mariadb -u root -e 'DROP SCHEMA Avanzu; CREATE SCHEMA Avanzu;'
+	@docker exec -it db mariadb -u root -e 'DROP SCHEMA locavest; CREATE SCHEMA locavest;'
 	@migrate -path=db/migrations -database=${DB_DSN} up
 
 ## mig/down: apply all down database migrations
