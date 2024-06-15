@@ -1,0 +1,14 @@
+@serverURL = http://localhost:8080
+
+###
+GET {{serverURL}}/api/health
+Accept: application/json
+
+###
+POST {{serverURL}}/api/courses
+Content-Type: application/json
+
+{
+  "id": 1,
+  "quanitity": 1
+}
