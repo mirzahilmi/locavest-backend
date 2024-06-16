@@ -7,5 +7,5 @@ type CartItem struct {
 	Name      string `db:"Name" json:"name"`
 	Image     string `db:"Image" json:"image"`
 	Format    string `db:"Format" json:"format"`
-	Price     string `db:"Price" json:"price"`
+	Price     float32 `db:"Price" json:"price"`
 }
