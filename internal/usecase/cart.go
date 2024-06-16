@@ -24,10 +24,7 @@ func NewcartUsecase(
 }
 
 func (u *cartUsecase) Create(ctx context.Context, item *model.CartItem) error {
-	if err := u.cartRepo.Create(ctx, item); err != nil {
-		return err
-	}
-	return nil
+	return u.cartRepo.Create(ctx, item)
 }
 
 func (u *cartUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
