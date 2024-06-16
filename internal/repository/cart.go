@@ -38,7 +38,8 @@ func (r *cartRepository) Read(ctx context.Context) ([]model.CartItem, error) {
 			P.Name,
 			P.Image,
 			P.Format,
-			P.Price
+			P.Price,
+			CI.Quantity
 		FROM CartItems CI
 		INNER JOIN Products P ON CI.ProductID = P.ID
 	`); err != nil {
