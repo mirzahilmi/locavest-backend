@@ -18,7 +18,7 @@ func RegisterCartHandler(api *echo.Group, usecase usecase.CartUsecaseItf) {
 	handler := cartHandler{usecase}
 	carts.GET("", handler.fetchCartItems)
 	carts.POST("", handler.addToCart)
-	carts.POST(".checkout", handler.checkout)
+	carts.POST("/checkout", handler.checkout)
 	carts.DELETE("/:id", handler.removeCartItem)
 }
 
