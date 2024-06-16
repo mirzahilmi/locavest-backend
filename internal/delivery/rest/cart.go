@@ -18,6 +18,7 @@ func RegisterCartHandler(api *echo.Group, usecase usecase.CartUsecaseItf) {
 	handler := cartHandler{usecase}
 	carts.GET("", handler.fetchCartItems)
 	carts.POST("", handler.addToCart)
+	carts.POST(".checkout", handler.checkout)
 	carts.DELETE("/:id", handler.removeCartItem)
 }
 
@@ -35,6 +36,13 @@ func (h *cartHandler) addToCart(c echo.Context) error {
 		return err
 	}
 	if err := h.usecase.Create(c.Request().Context(), &item); err != nil {
+		return err
+	}
+	return c.NoContent(http.StatusOK)
+}
+
+func (h *cartHandler) checkout(c echo.Context) error {
+	if err := h.usecase.Checkout(c.Request().Context()); err != nil {
 		return err
 	}
 	return c.NoContent(http.StatusOK)

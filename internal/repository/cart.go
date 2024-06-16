@@ -11,6 +11,7 @@ type CartRepositoryItf interface {
 	Create(ctx context.Context, cart *model.CartItem) error
 	Read(ctx context.Context) ([]model.CartItem, error)
 	Delete(ctx context.Context, id uint64) error
+	DeleteAll(ctx context.Context) error
 }
 
 type cartRepository struct {
@@ -52,6 +53,15 @@ func (r *cartRepository) Delete(ctx context.Context, id uint64) error {
 	if _, err := r.db.ExecContext(ctx, `
 		DELETE FROM CartItems WHERE ID = ?;
 	`, id); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *cartRepository) DeleteAll(ctx context.Context) error {
+	if _, err := r.db.ExecContext(ctx, `
+		DELETE FROM CartItems;
+	`); err != nil {
 		return err
 	}
 	return nil

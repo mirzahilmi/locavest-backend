@@ -9,6 +9,7 @@ import (
 
 type CartUsecaseItf interface {
 	Create(ctx context.Context, item *model.CartItem) error
+	Checkout(ctx context.Context) error
 	Fetch(ctx context.Context) ([]model.CartItem, error)
 	Delete(ctx context.Context, id uint64) error
 }
@@ -25,6 +26,10 @@ func NewcartUsecase(
 
 func (u *cartUsecase) Create(ctx context.Context, item *model.CartItem) error {
 	return u.cartRepo.Create(ctx, item)
+}
+
+func (u *cartUsecase) Checkout(ctx context.Context) error {
+	return u.cartRepo.DeleteAll(ctx)
 }
 
 func (u *cartUsecase) Fetch(ctx context.Context) ([]model.CartItem, error) {
